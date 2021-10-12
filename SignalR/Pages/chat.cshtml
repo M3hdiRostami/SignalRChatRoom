@@ -1,0 +1,96 @@
+﻿@page
+@{
+    Layout = "_LayoutChat";
+    string username = HttpContext.Request.Query["username"].ToString();
+    string twitterID = HttpContext.Request.Query["twitterID"].ToString(); 
+
+}
+
+
+<div id="frame">
+    <div id="sidepanel">
+        <div id="profile">
+            <div class="wrap">
+                <div>
+                    <img id="profile-img" src="/avatars/users/default.jpg" class="online" alt="" />
+                    <input class="input" value="@username" type="text" id="userInput" />
+                    <label id="Userstatus">Online</label>
+                    <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
+                </div>
+                <div id="status-options">
+                    <ul>
+                        <li id="status-online" class="active"><span class="status-circle"></span> <p>Online</p></li>
+                        <li id="status-away"><span class="status-circle"></span> <p>Away</p></li>
+                        <li id="status-busy"><span class="status-circle"></span> <p>Busy</p></li>
+                        <li id="status-offline"><span class="status-circle"></span> <p>Offline</p></li>
+                    </ul>
+                </div>
+                <div id="expanded">
+                    <label><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
+                    <a class="input" target="_blank" type="text" href="https://twitter.com/@twitterID">@twitterID</a>
+                </div>
+            </div>
+        </div>
+        <div id="search">
+            <label><i class="fa fa-search" aria-hidden="true"></i></label>
+            <input id="searchInput" type="text" placeholder="Search Groups..." />
+        </div>
+        <div id="chats">
+            <ul>
+
+                <!-- <li class="contact" data-contact-id="gp1">
+                     <div class="wrap">
+                         <span class="contact-status"></span>
+                         <img src="" alt="" />
+                         <div class="meta">
+                             <p class="name">gp 1</p>
+                             <p class="preview"></p>
+                         </div>
+                     </div>
+                 </li>
+                -->
+
+            </ul>
+        </div>
+        <div id="bottom-bar">
+            <button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add contact</span></button>
+            <button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
+        </div>
+    </div>
+    <div class="content">
+        <div class="contact-profile">
+            <img src="" alt="" />
+            <p id="currentChannelname">Please select a group to join the conversation</p>
+            <p class="text-success" id="currentChannelStatus"></p>
+            <div class="menu">
+                <i id="leaveChannel" title="leave Chat" class="fa fa-close" aria-hidden="true"></i>
+                <i class="fa fa-users" title="chat users" aria-hidden="true"></i>
+            </div>
+        </div>
+        <div id="messagesContainer" class="messages">
+
+
+
+        </div>
+        <div class="message-input">
+            <div class="wrap">
+                <input id="messageInput" type="text" placeholder="Write your message..." />
+                <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+                <button id="sendButton" class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+@section styles
+{
+    <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
+    <link href="~/css/StyleSheet.css" rel="stylesheet" />
+    <link href="~/css/animate.css" rel="stylesheet" />
+    
+}
+@section Scripts
+{
+    <script src="~/lib/signalr/signalr.js"></script>
+    <script src="~/js/chat.js"></script>
+}
