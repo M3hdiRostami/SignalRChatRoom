@@ -102,7 +102,7 @@ body {
 }
 
 #frame #sidepanel #profile.expanded .wrap {
-    height: 210px;
+    height: auto;
     line-height: initial;
 }
 
@@ -140,7 +140,7 @@ body {
     width: 50px;
     border-radius: 50%;
     padding: 3px;
-    border: 2px solid #e74c3c;
+    border: 2px solid #9e9695;
     height: auto;
     float: left;
     cursor: pointer;
@@ -159,18 +159,19 @@ body {
 }
 
 .contact.active img, img.online {
-    border: 2px solid #2ecc71;
+    border: 2px solid #2ecc71 !important;
 }
 
 img.away {
-    border: 2px solid #f1c40f;
+    border: 2px solid #f1c40f !important;
 }
 
 img.busy {
-    border: 2px solid #e74c3c;
+    border: 2px solid #e74c3c !important;
 }
+
 img.offline {
-    border: 2px solid #95a5a6;
+    border: 2px solid #95a5a6 !important;
 }
 
 #frame #sidepanel #profile .wrap p {
@@ -359,7 +360,7 @@ img.offline {
 #frame label {
     float: left;
     clear: both;
-    margin: 0 8px 5px 0;
+    margin: 0 5px;
     padding: 5px 0;
 }
 
