@@ -11,27 +11,27 @@ namespace XUnitTestProject
     [TestCaseOrderer(CasePriorityOrderer.TypeName, CasePriorityOrderer.AssembyName)]
     public class ChatStoreServiceUnitTests : DependencyResolverHelper
     {
-        private IChatStoreService ChatStoreService;
+        private IChatStoreService _chatStoreService;
         public ChatStoreServiceUnitTests()
         {
-            ChatStoreService = GetService<ChatStoreService>();
+            _chatStoreService = GetService<ChatStoreService>();
 
         }
         [Fact, Order(1)]
         public async Task Is_ChatStoreService_Initialed_Correctly()
         {
-            Assert.NotNull(ChatStoreService);
+            Assert.NotNull(_chatStoreService);
         }
         [Fact, Order(2)]
         public async Task Is_AddGroup_Works()
         {
 
             //Arrange
-            Group g = new Group() { GroupName = "test", GroupAvatar = "test" };
+            Group group = new Group() { GroupName = "test", GroupAvatar = "test" };
 
             //Act
-            ChatStoreService.AddGroup(g);
-            var found = (ChatStoreService.GetGroupList().Contains(g));
+            _chatStoreService.AddGroup(group);
+            var found = (_chatStoreService.GetGroupList().Contains(group));
 
             //Assert
             Assert.Equal(found, true);
@@ -40,13 +40,13 @@ namespace XUnitTestProject
         [Fact, Order(3)]
         public async Task Is_Join_Works()
         {
-
+              
             //Arrange
-            Group g = new Group() { GroupName = "test", GroupAvatar = "test" };
+            Group group = new Group() { GroupName = "test", GroupAvatar = "test" };
 
             //Act
-            await ChatStoreService.JoinToGroup("userID1", g.GroupName);
-            var found = (ChatStoreService.GetUserJoinedList("userID1").Any(G => G.GroupName == g.GroupName));
+            await _chatStoreService.JoinToGroup("userID1", group.GroupName);
+            var found = (_chatStoreService.GetUserJoinedList("userID1").Any(G => G.GroupName == group.GroupName));
 
             //Assert
             Assert.Equal(found, true);

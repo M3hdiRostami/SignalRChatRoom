@@ -10,11 +10,11 @@ namespace WebApplication.Features.Hubs
 {
     public class ChatHub : Hub
     {
-        private readonly IChatStoreService _ChatStoreService;
+        private readonly IChatStoreService _chatStoreService;
 
-        public ChatHub(IChatStoreService ChatStoreService)
+        public ChatHub(IChatStoreService chatStoreService)
         {
-            this._ChatStoreService = ChatStoreService;
+            this._chatStoreService = chatStoreService;
         }
         public async Task SendUserAction(string user, string message)
         {
@@ -35,8 +35,8 @@ namespace WebApplication.Features.Hubs
         {
             await base.OnDisconnectedAsync(exception);
 
-            await _ChatStoreService.RemoveUserFromJoinedList(Context.ConnectionId);
-            await loadGroupsList();
+            await _chatStoreService.RemoveUserFromJoinedList(Context.ConnectionId);
+            await LoadGroupsList();
             await Clients.All.SendAsync("OnDisconnected " + Context.ConnectionId);
         }
 
@@ -56,7 +56,7 @@ namespace WebApplication.Features.Hubs
             if (Context.ConnectionId.Equals(message.ConnectionId))
             {
 
-                await _ChatStoreService.AddUserMessage(message);
+                await _chatStoreService.AddUserMessage(message);
                 await Clients.Group(message.GroupName).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(message));
             }
         }
@@ -67,11 +67,11 @@ namespace WebApplication.Features.Hubs
             {
                 connectionId = Context.ConnectionId;
             }
-            var grouplist = _ChatStoreService.GetUserJoinedList(connectionId);
+            var grouplist = _chatStoreService.GetUserJoinedList(connectionId);
             await Clients.Caller.SendAsync("ReceiveMyJoinedGroupsList", JsonConvert.SerializeObject(grouplist));
 
         }
-        public async Task JoinGroup(string groupName, string? connectionId, string username)
+        public async Task JoinGroup(string groupName, string? connectionId, string userName)
         {
 
             if (string.IsNullOrEmpty(connectionId))
@@ -79,25 +79,25 @@ namespace WebApplication.Features.Hubs
                 connectionId = Context.ConnectionId;
             }
 
-            await _ChatStoreService.JoinToGroup(connectionId, groupName);
+            await _chatStoreService.JoinToGroup(connectionId, groupName);
             await Groups.AddToGroupAsync(connectionId, groupName);
-            Message msg = new Message
+            Message message = new Message
             {
                 Sender = "notifier",
                 Type = "join",
                 ConnectionId = connectionId,
                 GroupName = groupName,
-                Content = username + " joined group: " + groupName,
+                Content = userName + " joined group: " + groupName,
             };
-            await loadGroupsList();
+            await LoadGroupsList();
             await SendMyJoinedGroupsList(connectionId);
-            await Clients.Group(groupName).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(msg));
+            await Clients.Group(groupName).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(message));
 
         }
 
-        public async Task LeaveGroup(string groupName, string? connectionId, string username)
+        public async Task LeaveGroup(string groupName, string? connectionId, string userName)
         {
-            await _ChatStoreService.RemoveUserFromJoinedList(Context.ConnectionId);
+            await _chatStoreService.RemoveUserFromJoinedList(Context.ConnectionId);
 
             if (string.IsNullOrEmpty(connectionId))
             {
@@ -105,23 +105,23 @@ namespace WebApplication.Features.Hubs
             }
             await Groups.RemoveFromGroupAsync(connectionId, groupName);
 
-            Message msg = new Message
+            Message message = new Message
             {
                 Sender = "notifier",
                 Type = "leave",
                 ConnectionId = connectionId,
                 GroupName = groupName,
-                Content = username + " left group: " + groupName,
+                Content = userName + " left group: " + groupName,
             };
-            await loadGroupsList();
+            await LoadGroupsList();
             await SendMyJoinedGroupsList(connectionId);
-            await Clients.Group(groupName).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(msg));
+            await Clients.Group(groupName).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(message));
 
         }
-        public async Task loadGroupsList()
+        public async Task LoadGroupsList()
         {
             //todo:If more mapping is required use mapping tools such as AutoMapper,Mapster
-            var groupsList = _ChatStoreService.GetGroupList().Select(g => new { g.GroupAvatar,g.GroupName,g.MembersCount});
+            var groupsList = _chatStoreService.GetGroupList().Select(g => new { g.GroupAvatar,g.GroupName,g.MembersCount});
             await Clients.All.SendAsync("loadGroupsList", JsonConvert.SerializeObject(groupsList));
 
         }

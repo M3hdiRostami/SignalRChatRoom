@@ -13,18 +13,16 @@ namespace XUnitTest.helpers
 {
     public class DependencyResolverHelper
     {
-        //protected readonly IWebHost _webHost;
-        protected IConfiguration _configuration => GetService<IConfiguration>();
-        protected IWebHostEnvironment _webHostEnvironment => GetService<IWebHostEnvironment>();
-        private readonly WebApplicationFactory<Startup> factory;
+
+        protected IConfiguration Configuration => GetService<IConfiguration>();
+        protected IWebHostEnvironment WebHostEnvironment => GetService<IWebHostEnvironment>();
+        private readonly WebApplicationFactory<Startup> _webApplicationFactory;
 
         public DependencyResolverHelper()
         {
-            //_webHost = WebHost.CreateDefaultBuilder()
-            //     .UseStartup<Startup>()
-            //     .Build();
+           
 
-            factory = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
+            _webApplicationFactory = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
             {
                 builder.ConfigureTestServices(services =>
                 {
@@ -44,7 +42,7 @@ namespace XUnitTest.helpers
 
         public T GetService<T>()
         {
-            using (var serviceScope = factory.Services.CreateScope())
+            using (var serviceScope = _webApplicationFactory.Services.CreateScope())
             {
                 var services = serviceScope.ServiceProvider;
                 try
@@ -54,7 +52,7 @@ namespace XUnitTest.helpers
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Console.WriteLine(e.Message);
                     throw;
                 }
             };

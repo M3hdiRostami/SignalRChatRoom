@@ -11,15 +11,15 @@ namespace WebApplication.Services
 
     public class ChatStoreLoggerService : ChatStoreService
     {
-        private MongoDBSettings _mongoDatabaseSettings;
-        public MongoClient _mongoDatabaseClient { get; set; }
-        public IMongoDatabase _db { get; set; }
+        protected MongoDBSettings _mongoDatabaseSettings;
+        protected MongoClient MongoDatabaseClient { get; set; }
+        protected IMongoDatabase MongoDB { get; set; }
         public ChatStoreLoggerService(IDistributedCache cache, IOptions<MongoDBSettings> mongoDatabaseSettings,IOptions<RedisDatabaseSettings> redisDatabaseSettings) : base(cache, redisDatabaseSettings)
         {
             _mongoDatabaseSettings = mongoDatabaseSettings.Value;
 
-            _mongoDatabaseClient = new MongoClient(_mongoDatabaseSettings.ConnectionString);
-            _db = _mongoDatabaseClient.GetDatabase(_mongoDatabaseSettings.DatabaseName);
+            MongoDatabaseClient = new MongoClient(_mongoDatabaseSettings.ConnectionString);
+            MongoDB = MongoDatabaseClient.GetDatabase(_mongoDatabaseSettings.DatabaseName);
 
             Init().Wait();
 
@@ -27,12 +27,12 @@ namespace WebApplication.Services
         protected virtual async Task Init()
         {
             
-            bool found = _db.ListCollectionNames().ToList().Exists(c => c == GetChatCollectionName());
+            bool found = MongoDB.ListCollectionNames().ToList().Exists(c => c == GetChatCollectionName());
             if (!found)
             {
-                _db.CreateCollection(GetChatCollectionName());
+                MongoDB.CreateCollection(GetChatCollectionName());
                 if (Groups != null)
-                    await _db.GetCollection<Group>(GetChatCollectionName()).InsertManyAsync(Groups);
+                    await MongoDB.GetCollection<Group>(GetChatCollectionName()).InsertManyAsync(Groups);
 
             }
 
@@ -42,7 +42,7 @@ namespace WebApplication.Services
             bool IsSaved = await base.SaveAsync();
 
             foreach (var g in Groups)
-                _db.GetCollection<Group>(GetChatCollectionName()).ReplaceOne(a => a.GroupName == g.GroupName, g);
+                MongoDB.GetCollection<Group>(GetChatCollectionName()).ReplaceOne(a => a.GroupName == g.GroupName, g);
 
             return IsSaved;
         }

@@ -33,6 +33,7 @@ namespace SignalR
             {
                 options.Configuration = Configuration.GetSection(nameof(RedisDatabaseSettings))["ConnectionString"];
             });
+            
             //services.AddSingleton<IConnectionMultiplexer>(provider => ConnectionMultiplexer.Connect(Configuration.GetSection(nameof(RedisDatabaseSettings))["ConnectionString"]));
             services.AddSingleton<ChatStoreService>();
             services.AddSingleton<IChatStoreService, ChatStoreLoggerService>();
